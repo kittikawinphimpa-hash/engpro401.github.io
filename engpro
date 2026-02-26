@@ -1,0 +1,1526 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRACTICE ENG - AI Learning</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Courier+Prime:wght@700&amp;display=swap" rel="stylesheet">
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; width: 100%; }
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Fredoka', sans-serif;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.app-wrapper { height: 100%; width: 100%; display: flex; flex-direction: column; }
+.content { flex: 1; overflow-y: auto; width: 100%; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 5px; }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.card {
+  background: white;
+  border-radius: 4px;
+  border: 3px solid #333;
+  padding: 20px;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+}
+
+.btn {
+  border: 3px solid #333;
+  padding: 12px 24px;
+  border-radius: 0px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.1s;
+  font-family: 'Fredoka', sans-serif;
+}
+
+.btn-primary { background: #667eea; color: white; box-shadow: 3px 3px 0px rgba(0,0,0,0.3); }
+.btn-primary:hover { transform: translate(0px, -2px); box-shadow: 5px 5px 0px rgba(0,0,0,0.3); }
+.btn-secondary { background: #764ba2; color: white; box-shadow: 3px 3px 0px rgba(0,0,0,0.3); }
+.btn-danger { background: #ff6b6b; color: white; }
+.btn-success { background: #51cf66; color: white; }
+
+.input {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  border: 3px solid #333;
+  border-radius: 0px;
+  font-size: 16px;
+  outline: none;
+  font-family: 'Fredoka', sans-serif;
+}
+
+.input:focus { box-shadow: 0 0 0 2px #667eea; }
+
+.header {
+  background: white;
+  border-bottom: 4px solid #333;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 0px rgba(0,0,0,0.1);
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 0px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  border: 2px solid transparent;
+}
+
+.nav-link:hover { background: #f0f0f0; border: 2px solid #667eea; }
+.nav-link.active { background: #667eea; color: white; border: 2px solid #333; }
+
+.xp-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 0px;
+  font-weight: 700;
+  font-size: 14px;
+  border: 2px solid #333;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.show { display: flex; }
+
+.modal-content {
+  background: white;
+  border: 4px solid #333;
+  padding: 30px;
+  border-radius: 4px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.grammar-feedback {
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.grammar-correct {
+  background: #d4edda;
+  color: #155724;
+  border: 2px solid #28a745;
+}
+
+.grammar-wrong {
+  background: #f8d7da;
+  color: #721c24;
+  border: 2px solid #f5c6cb;
+}
+
+.quiz-option {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.quiz-option:hover { border-color: #667eea; background: #f8f9ff; }
+.quiz-option.selected { border-color: #667eea; background: #667eea; color: white; }
+.quiz-option.correct { border-color: #51cf66; background: #51cf66; color: white; }
+.quiz-option.wrong { border-color: #ff6b6b; background: #ff6b6b; color: white; }
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border: 3px solid #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  background: #667eea;
+  color: white;
+  overflow: hidden;
+  margin: 0 auto 15px;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tournament-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: white;
+  border: 2px solid #333;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.result-table th {
+  background: #667eea;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 700;
+  border: 2px solid #333;
+}
+
+.result-table td {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+}
+
+.result-table tr:hover {
+  background: #f8f9ff;
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid #333;
+}
+
+.level-a1 { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+.level-a2 { background: #fff3e0; color: #e65100; border-color: #e65100; }
+.level-b1 { background: #e3f2fd; color: #1565c0; border-color: #1565c0; }
+.level-b2 { background: #f3e5f5; color: #6a1b9a; border-color: #6a1b9a; }
+.level-c1 { background: #fce4ec; color: #c2185b; border-color: #c2185b; }
+.level-c2 { background: #ffe0b2; color: #bf360c; border-color: #bf360c; }
+
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #667eea;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.answer-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.answer-card:hover { border-color: #667eea; }
+.answer-card.selected { background: #667eea; color: white; border-color: #333; }
+.answer-card.correct { background: #51cf66; color: white; border-color: #333; }
+.answer-card.wrong { background: #ff6b6b; color: white; border-color: #333; }
+
+.grammar-issue {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+.suggestion {
+  background: #d1ecf1;
+  border-left: 4px solid #17a2b8;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+.explanation-box {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 12px;
+}
+
+.project-credit {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 11px;
+  opacity: 0.5;
+  color: rgba(255,255,255,0.7);
+  text-align: right;
+  line-height: 1.4;
+}
+
+.pixel-character {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-wrapper" id="app"><!-- AUTH SCREEN -->
+   <div id="auth-screen" style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
+    <div class="project-credit">
+     โครงงานคอมพิวเตอร์เพื่อการศึกษา<br>
+     ชั้นมัธยมศึกษาปีที่ 4/1
+    </div>
+    <div class="card" style="max-width: 420px; width: 100%;">
+     <div style="text-align: center; margin-bottom: 40px;">
+      <svg class="pixel-character" viewbox="0 0 32 32"><!-- Hair --> <rect x="6" y="2" width="20" height="2" fill="#8b6f47" /> <rect x="5" y="4" width="2" height="2" fill="#8b6f47" /> <rect x="25" y="4" width="2" height="2" fill="#8b6f47" /> <!-- Head --> <rect x="8" y="4" width="16" height="8" fill="#fdbcb4" /> <!-- Eyes --> <rect x="10" y="6" width="2" height="2" fill="#000" /> <rect x="20" y="6" width="2" height="2" fill="#000" /> <!-- Eyebrows --> <rect x="10" y="5" width="2" height="1" fill="#8b6f47" /> <rect x="20" y="5" width="2" height="1" fill="#8b6f47" /> <!-- Nose --> <rect x="15" y="8" width="2" height="1" fill="#f0b8a0" /> <!-- Smile --> <rect x="12" y="10" width="8" height="1" fill="#000" /> <!-- Shirt (Blue) --> <rect x="6" y="12" width="20" height="8" fill="#667eea" /> <!-- Shirt details --> <rect x="14" y="12" width="4" height="1" fill="#764ba2" /> <!-- Arms --> <rect x="2" y="14" width="4" height="4" fill="#fdbcb4" /> <rect x="26" y="14" width="4" height="4" fill="#fdbcb4" /> <!-- Pants (Dark) --> <rect x="8" y="20" width="7" height="8" fill="#333" /> <rect x="17" y="20" width="7" height="8" fill="#333" /> <!-- Shoes --> <rect x="8" y="28" width="7" height="2" fill="#000" /> <rect x="17" y="28" width="7" height="2" fill="#000" />
+      </svg>
+      <h1 style="font-size: 32px; color: #667eea; margin-bottom: 8px; font-weight: 900;">PRACTICE ENG</h1>
+      <p style="opacity: 0.6; font-size: 14px;">AI-Powered English Learning</p>
+     </div>
+     <div id="login-form">
+      <h2 style="margin-bottom: 20px; font-size: 16px; font-weight: 700;">เข้าสู่ระบบ</h2>
+      <div style="margin-bottom: 15px;"><input type="text" id="login-user" class="input" placeholder="Username">
+      </div>
+      <div style="margin-bottom: 20px;"><input type="password" id="login-pass" class="input" placeholder="Password">
+      </div>
+      <div id="login-error" style="color: #ff6b6b; font-size: 14px; margin-bottom: 15px; display: none; font-weight: 700;"></div><button class="btn btn-primary" style="width: 100%; margin-bottom: 15px;" id="login-btn">เข้าสู่ระบบ ➜</button>
+      <p style="text-align: center; opacity: 0.6; font-size: 13px;">ยังไม่มีบัญชี? <span id="go-reg-link" style="color: #667eea; cursor: pointer; font-weight: 700;">สมัครเลย</span></p>
+     </div>
+     <div id="register-form" style="display: none;">
+      <h2 style="margin-bottom: 20px; font-size: 16px; font-weight: 700;">สมัครสมาชิก</h2>
+      <div style="margin-bottom: 15px;"><input type="text" id="reg-name" class="input" placeholder="ชื่อเล่น">
+      </div>
+      <div style="margin-bottom: 15px;"><input type="text" id="reg-user" class="input" placeholder="Username">
+      </div>
+      <div style="margin-bottom: 20px;"><input type="password" id="reg-pass" class="input" placeholder="Password">
+      </div>
+      <div id="reg-error" style="color: #ff6b6b; font-size: 14px; margin-bottom: 15px; display: none; font-weight: 700;"></div><button class="btn btn-primary" style="width: 100%; margin-bottom: 15px;" id="reg-btn">สมัครสมาชิก ➜</button>
+      <p style="text-align: center; opacity: 0.6; font-size: 13px;">มีบัญชีแล้ว? <span id="go-login-link" style="color: #667eea; cursor: pointer; font-weight: 700;">เข้าสู่ระบบ</span></p>
+     </div>
+    </div>
+   </div><!-- MAIN APP -->
+   <div id="main-app" style="display: none; flex-direction: column; height: 100%;"><!-- Header -->
+    <header class="header">
+     <h1 style="font-size: 18px; color: #667eea; cursor: pointer; margin: 0; min-width: 160px; font-weight: 900; display: flex; align-items: center; gap: 8px;" onclick="navigateTo('home')">
+      <svg width="24" height="24" viewbox="0 0 32 32"><rect x="6" y="2" width="20" height="2" fill="#667eea" /> <rect x="5" y="4" width="2" height="2" fill="#667eea" /> <rect x="25" y="4" width="2" height="2" fill="#667eea" /> <rect x="8" y="4" width="16" height="8" fill="#fdbcb4" /> <rect x="10" y="6" width="2" height="2" fill="#000" /> <rect x="20" y="6" width="2" height="2" fill="#000" /> <rect x="6" y="12" width="20" height="8" fill="#667eea" /> <rect x="2" y="14" width="4" height="4" fill="#fdbcb4" /> <rect x="26" y="14" width="4" height="4" fill="#fdbcb4" /> <rect x="8" y="20" width="7" height="8" fill="#333" /> <rect x="17" y="20" width="7" height="8" fill="#333" />
+      </svg> ENG</h1>
+     <nav style="display: flex; gap: 8px; flex: 1; overflow-x: auto; margin: 0 20px;">
+      <div class="nav-link active" data-page="home" onclick="navigateTo('home')">
+       🏠 Home
+      </div>
+      <div class="nav-link" data-page="games" onclick="navigateTo('games')">
+       🎮 Games
+      </div>
+      <div class="nav-link" data-page="grammar" onclick="navigateTo('grammar')">
+       ✍️ Grammar
+      </div>
+      <div class="nav-link" data-page="tournament" onclick="navigateTo('tournament')">
+       🏆 Tournament
+      </div>
+      <div class="nav-link" data-page="profile" onclick="navigateTo('profile')">
+       👤 Profile
+      </div>
+     </nav>
+     <div style="display: flex; gap: 12px; align-items: center; min-width: 180px;">
+      <div class="xp-badge">
+       ⭐ <span id="xp-display">0</span> XP
+      </div>
+      <div class="xp-badge" style="background: linear-gradient(135deg, #ff6b6b, #ff8787);">
+       🔥 <span id="streak-display">0</span>
+      </div>
+     </div>
+    </header><!-- Content -->
+    <div class="content" id="content"></div>
+   </div><!-- Explanation Modal -->
+   <div id="explanation-modal" class="modal">
+    <div class="modal-content">
+     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-weight: 900; font-size: 20px;">📚 Explanation</h2><button class="btn btn-danger" style="padding: 6px 12px;" onclick="closeExplanationModal()">✕</button>
+     </div>
+     <div id="explanation-content"></div>
+    </div>
+   </div>
+  </div>
+  <script>
+// ===== VOCABULARY DATABASE =====
+const VOCABULARY_DATA = {
+  A1: [
+    { word: 'cat', meaning: 'แมว', example: 'I have a cat', level: 'A1' },
+    { word: 'dog', meaning: 'สุนัข', example: 'The dog is friendly', level: 'A1' },
+    { word: 'eat', meaning: 'กิน', example: 'I eat rice every day', level: 'A1' },
+    { word: 'sleep', meaning: 'นอน', example: 'I sleep at night', level: 'A1' },
+    { word: 'happy', meaning: 'มีความสุข', example: 'I am happy today', level: 'A1' },
+    { word: 'run', meaning: 'วิ่ง', example: 'The boy runs in the park', level: 'A1' },
+    { word: 'jump', meaning: 'กระโดด', example: 'Children jump in the playground', level: 'A1' },
+    { word: 'walk', meaning: 'เดิน', example: 'She walks to school', level: 'A1' },
+    { word: 'read', meaning: 'อ่าน', example: 'I read a book every night', level: 'A1' },
+    { word: 'write', meaning: 'เขียน', example: 'He writes letters', level: 'A1' },
+    { word: 'book', meaning: 'หนังสือ', example: 'This book is interesting', level: 'A1' },
+    { word: 'apple', meaning: 'แอปเปิล', example: 'I like red apples', level: 'A1' },
+    { word: 'orange', meaning: 'ส้ม', example: 'Oranges are sweet', level: 'A1' },
+    { word: 'water', meaning: 'น้ำ', example: 'Drink water every day', level: 'A1' },
+    { word: 'milk', meaning: 'นม', example: 'Children drink milk', level: 'A1' },
+    { word: 'house', meaning: 'บ้าน', example: 'My house is big', level: 'A1' },
+    { word: 'school', meaning: 'โรงเรียน', example: 'I go to school', level: 'A1' },
+    { word: 'teacher', meaning: 'ครู', example: 'My teacher is kind', level: 'A1' },
+    { word: 'student', meaning: 'นักเรียน', example: 'Students study hard', level: 'A1' },
+    { word: 'mother', meaning: 'แม่', example: 'My mother loves me', level: 'A1' },
+    { word: 'father', meaning: 'พ่อ', example: 'My father is tall', level: 'A1' },
+    { word: 'sister', meaning: 'น้องสาว/พี่สาว', example: 'My sister is beautiful', level: 'A1' },
+    { word: 'brother', meaning: 'น้องชาย/พี่ชาย', example: 'My brother plays football', level: 'A1' },
+    { word: 'friend', meaning: 'เพื่อน', example: 'She is my best friend', level: 'A1' },
+    { word: 'red', meaning: 'แดง', example: 'I like red color', level: 'A1' },
+    { word: 'blue', meaning: 'สีน้ำเงิน', example: 'The sky is blue', level: 'A1' },
+    { word: 'green', meaning: 'สีเขียว', example: 'The grass is green', level: 'A1' },
+    { word: 'black', meaning: 'สีดำ', example: 'He wears black shoes', level: 'A1' },
+    { word: 'white', meaning: 'สีขาว', example: 'Snow is white', level: 'A1' },
+    { word: 'big', meaning: 'ใหญ่', example: 'This elephant is very big', level: 'A1' },
+    { word: 'small', meaning: 'เล็ก', example: 'The mouse is small', level: 'A1' },
+    { word: 'good', meaning: 'ดี', example: 'This is good food', level: 'A1' },
+    { word: 'bad', meaning: 'ไม่ดี', example: 'That idea is bad', level: 'A1' },
+    { word: 'hot', meaning: 'ร้อน', example: 'The weather is hot', level: 'A1' },
+    { word: 'cold', meaning: 'เย็น', example: 'Ice cream is cold', level: 'A1' },
+    { word: 'one', meaning: 'หนึ่ง', example: 'I have one car', level: 'A1' },
+    { word: 'two', meaning: 'สอง', example: 'I have two eyes', level: 'A1' },
+    { word: 'three', meaning: 'สาม', example: 'There are three birds', level: 'A1' },
+    { word: 'ten', meaning: 'สิบ', example: 'I have ten fingers', level: 'A1' },
+    { word: 'hundred', meaning: 'ร้อย', example: 'One hundred people came', level: 'A1' },
+    { word: 'come', meaning: 'มา', example: 'Come here please', level: 'A1' },
+    { word: 'go', meaning: 'ไป', example: 'I go to work', level: 'A1' },
+    { word: 'play', meaning: 'เล่น', example: 'Children play in the park', level: 'A1' },
+    { word: 'work', meaning: 'ทำงาน', example: 'He works hard', level: 'A1' },
+    { word: 'rest', meaning: 'พักผ่อน', example: 'I rest on Sunday', level: 'A1' },
+    { word: 'smile', meaning: 'ยิ้ม', example: 'She smiles at me', level: 'A1' },
+    { word: 'cry', meaning: 'ร้องไห้', example: 'The baby cries', level: 'A1' },
+    { word: 'laugh', meaning: 'หัวเราะ', example: 'We all laugh together', level: 'A1' },
+    { word: 'sing', meaning: 'ร้องเพลง', example: 'She sings beautifully', level: 'A1' },
+    { word: 'dance', meaning: 'เต้น', example: 'They dance at the party', level: 'A1' },
+  ],
+  A2: [
+    { word: 'enjoy', meaning: 'ชอบ/สนุก', example: 'I enjoy playing football', level: 'A2' },
+    { word: 'believe', meaning: 'เชื่อ', example: 'I believe in you', level: 'A2' },
+    { word: 'support', meaning: 'สนับสนุน', example: 'I support your dream', level: 'A2' },
+    { word: 'understand', meaning: 'เข้าใจ', example: 'Do you understand me?', level: 'A2' },
+    { word: 'remember', meaning: 'จำได้', example: 'I remember that day', level: 'A2' },
+    { word: 'forget', meaning: 'ลืม', example: 'I forget my keys', level: 'A2' },
+    { word: 'learn', meaning: 'เรียน/เรียนรู้', example: 'We learn English at school', level: 'A2' },
+    { word: 'teach', meaning: 'สอน', example: 'She teaches math', level: 'A2' },
+    { word: 'begin', meaning: 'เริ่ม', example: 'The class begins at 8', level: 'A2' },
+    { word: 'end', meaning: 'สิ้นสุด', example: 'The movie ends at 10', level: 'A2' },
+    { word: 'continue', meaning: 'ต่อเนื่อง', example: 'Please continue reading', level: 'A2' },
+    { word: 'stop', meaning: 'หยุด', example: 'Stop the car', level: 'A2' },
+    { word: 'start', meaning: 'เริ่มต้น', example: 'Start your engine', level: 'A2' },
+    { word: 'finish', meaning: 'เสร็จ', example: 'I finish my homework', level: 'A2' },
+    { word: 'happen', meaning: 'เกิดขึ้น', example: 'What happened?', level: 'A2' },
+    { word: 'change', meaning: 'เปลี่ยน', example: 'I want to change my job', level: 'A2' },
+    { word: 'improve', meaning: 'ปรับปรุง', example: 'We need to improve', level: 'A2' },
+    { word: 'help', meaning: 'ช่วย', example: 'Can you help me?', level: 'A2' },
+    { word: 'try', meaning: 'พยายาม', example: 'Try your best', level: 'A2' },
+    { word: 'succeed', meaning: 'สำเร็จ', example: 'You will succeed', level: 'A2' },
+    { word: 'fail', meaning: 'ล้มเหลว', example: 'Do not fail', level: 'A2' },
+    { word: 'win', meaning: 'ชนะ', example: 'Our team will win', level: 'A2' },
+    { word: 'lose', meaning: 'แพ้', example: 'We lost the game', level: 'A2' },
+    { word: 'know', meaning: 'รู้', example: 'I know that person', level: 'A2' },
+    { word: 'think', meaning: 'คิด', example: 'What do you think?', level: 'A2' },
+    { word: 'want', meaning: 'ต้องการ', example: 'I want a new car', level: 'A2' },
+    { word: 'need', meaning: 'ต้องการ/ต้องการมี', example: 'I need your help', level: 'A2' },
+    { word: 'like', meaning: 'ชอบ', example: 'I like ice cream', level: 'A2' },
+    { word: 'love', meaning: 'รัก', example: 'I love my family', level: 'A2' },
+    { word: 'hate', meaning: 'เกลียด', example: 'I hate spam', level: 'A2' },
+  ]
+};
+
+// ===== GRAMMAR RULES DATABASE =====
+const GRAMMAR_RULES = [
+  {
+    name: 'Subject-Verb Agreement (I)',
+    test: (text) => /\bI\s+(?:is|are|was|were|has|have|do|does)/gi.test(text),
+    pattern: /I\s+(is|are)/gi,
+    fix: (text) => text.replace(/I\s+is/gi, 'I am').replace(/I\s+are/gi, 'I am'),
+    explanation: 'I always uses "am" (present), "was" (past), "have", "do". Examples:\n• I am happy\n• I was tired\n• I have a pen\n• I do understand'
+  },
+  {
+    name: 'Subject-Verb Agreement (He/She/It)',
+    test: (text) => /\b(he|she|it)\s+(?:am|are|have|do)\b/gi.test(text),
+    pattern: /\b(he|she|it)\s+(am|are|have|do)\b/gi,
+    fix: (text) => text.replace(/(he|she|it)\s+(am|are|have|do)\b/gi, '$1 is/has/does'),
+    explanation: 'He/She/It uses "is" (present), "was" (past), "has", "does". Examples:\n• He is tall\n• She is a teacher\n• It has a tail\n• He does homework'
+  },
+  {
+    name: 'Article Usage (A/An)',
+    test: (text) => /\ba\s+[aeiou]/gi.test(text),
+    pattern: /\ba\s+([aeiou])/gi,
+    fix: (text) => text.replace(/\ba\s+([aeiou])/gi, 'an $1'),
+    explanation: 'Use "an" before vowel sounds, "a" before consonants:\n• a cat, a dog\n• an apple, an orange\n• an elephant, an idea'
+  },
+  {
+    name: 'Plural Form (S)',
+    test: (text) => /\b(student|book|apple|cat|dog)\s+(is|are)\b/gi.test(text),
+    pattern: /\b(student|book|apple|cat|dog)\s+is\b/gi,
+    fix: (text) => text.replace(/\b(student|book|apple|cat|dog)\s+is\b/gi, '$1s are'),
+    explanation: 'Plural nouns use "are" not "is":\n• The cat is black (singular)\n• The cats are black (plural)\n• One book is here / Two books are here'
+  },
+  {
+    name: 'Word Order (Questions)',
+    test: (text) => /^[a-z]+(you|he|she|it|I|we|they)\s+/gmi.test(text),
+    pattern: null,
+    fix: null,
+    explanation: 'Question word order: Verb + Subject\n• Are you happy? (NOT: You are happy?)\n• Does he like pizza? (NOT: He does like pizza?)\n• Can she swim? (NOT: She can swim?)'
+  },
+  {
+    name: 'Spelling - Common Words',
+    test: (text) => /\b(recieve|occured|seperate|writting|hopping|stoping)\b/gi.test(text),
+    pattern: /\b(recieve|occured|seperate|writting|hopping|stoping)\b/gi,
+    fix: (text) => text
+      .replace(/recieve/gi, 'receive')
+      .replace(/occured/gi, 'occurred')
+      .replace(/seperate/gi, 'separate')
+      .replace(/writting/gi, 'writing')
+      .replace(/hopping/gi, 'hoping')
+      .replace(/stoping/gi, 'stopping'),
+    explanation: 'Common spelling mistakes:\n• receive (not recieve) - "i before e except after c"\n• occurred (not occured) - double C and R\n• separate (not seperate) - "there is A in separate"\n• writing (not writting) - drop E before -ing\n• hoping (not hopping) - drop E before -ing'
+  },
+  {
+    name: 'Capitalization',
+    test: (text) => /[.!?]\s+[a-z]/.test(text),
+    pattern: /[.!?]\s+([a-z])/g,
+    fix: (text) => text.replace(/[.!?]\s+([a-z])/g, (match) => match.replace(/(.)(.)/, '$1' + match[match.length-1].toUpperCase())),
+    explanation: 'Capitalize first letter after period, question mark, exclamation:\n• I like apples. They are sweet. (NOT: They are sweet)\n• Do you like cats? I do. (NOT: i do)'
+  }
+];
+
+let allUsers = [];
+let currentUser = null;
+let currentPage = 'home';
+let gameState = { questions: [], current: 0, score: 0, results: [], selectedAnswer: null };
+
+function saveToLocalStorage() {
+  localStorage.setItem('practice_eng_users', JSON.stringify(allUsers));
+}
+
+function loadFromLocalStorage() {
+  const data = localStorage.getItem('practice_eng_users');
+  if (data) {
+    try {
+      allUsers = JSON.parse(data);
+    } catch (e) {
+      allUsers = [];
+    }
+  }
+}
+
+function showPage(html) {
+  document.getElementById('content').innerHTML = html;
+  document.getElementById('content').scrollTop = 0;
+}
+
+function navigateTo(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+
+  switch(page) {
+    case 'home': renderHome(); break;
+    case 'games': renderGames(); break;
+    case 'grammar': renderGrammar(); break;
+    case 'tournament': renderTournament(); break;
+    case 'profile': renderProfile(); break;
+  }
+}
+
+function renderHome() {
+  const xp = currentUser.total_xp || 0;
+  const streak = currentUser.daily_streak || 0;
+  const correct = currentUser.correct_answers || 0;
+  const wrong = currentUser.wrong_answers || 0;
+  const accuracy = (correct + wrong) > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+
+  showPage(`
+    <div style="padding: 30px; max-width: 1200px; margin: 0 auto;">
+      <h2 style="font-size: 32px; margin-bottom: 20px; font-weight: 900;">สวัสดี, ${currentUser.display_name}! 🎓</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 30px;">
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">⭐</div>
+          <div style="font-size: 22px; color: #667eea; font-weight: 900;">${xp}</div>
+          <div style="opacity: 0.6; font-size: 11px;">Total XP</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🔥</div>
+          <div style="font-size: 22px; color: #ff6b6b; font-weight: 900;">${streak}</div>
+          <div style="opacity: 0.6; font-size: 11px;">Streak</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">✅</div>
+          <div style="font-size: 22px; color: #51cf66; font-weight: 900;">${correct}</div>
+          <div style="opacity: 0.6; font-size: 11px;">Correct</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">❌</div>
+          <div style="font-size: 22px; color: #ff6b6b; font-weight: 900;">${wrong}</div>
+          <div style="opacity: 0.6; font-size: 11px;">Wrong</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">📊</div>
+          <div style="font-size: 22px; color: #667eea; font-weight: 900;">${accuracy}%</div>
+          <div style="opacity: 0.6; font-size: 11px;">Accuracy</div>
+        </div>
+      </div>
+
+      <h3 style="font-weight: 700; margin-bottom: 15px; font-size: 18px;">🎮 Quick Access</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;">
+        <div class="card" style="cursor: pointer; padding: 20px; text-align: center;" onclick="navigateTo('games')">
+          <div style="font-size: 40px; margin-bottom: 10px;">🎯</div>
+          <h4 style="font-weight: 700; font-size: 14px;">Play Games</h4>
+        </div>
+        <div class="card" style="cursor: pointer; padding: 20px; text-align: center;" onclick="navigateTo('grammar')">
+          <div style="font-size: 40px; margin-bottom: 10px;">✍️</div>
+          <h4 style="font-weight: 700; font-size: 14px;">Grammar Check</h4>
+        </div>
+        <div class="card" style="cursor: pointer; padding: 20px; text-align: center;" onclick="navigateTo('tournament')">
+          <div style="font-size: 40px; margin-bottom: 10px;">🏆</div>
+          <h4 style="font-weight: 700; font-size: 14px;">Tournament</h4>
+        </div>
+        <div class="card" style="cursor: pointer; padding: 20px; text-align: center;" onclick="navigateTo('profile')">
+          <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+          <h4 style="font-weight: 700; font-size: 14px;">Profile</h4>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function renderGames() {
+  showPage(`
+    <div style="padding: 30px; max-width: 1000px; margin: 0 auto;">
+      <h2 style="font-size: 32px; margin-bottom: 20px; font-weight: 900;">🎮 Learning Games</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+        <div class="card" style="cursor: pointer; padding: 25px; text-align: center;" onclick="startGame('reading')">
+          <div style="font-size: 48px; margin-bottom: 12px;">📖</div>
+          <h4 style="font-weight: 700;">Reading Quiz</h4>
+          <div style="color: #667eea; font-weight: 900; margin-top: 8px;">+50 XP</div>
+          <div style="opacity: 0.6; font-size: 12px;">50+ Questions</div>
+        </div>
+
+        <div class="card" style="cursor: pointer; padding: 25px; text-align: center;" onclick="startGame('typing')">
+          <div style="font-size: 48px; margin-bottom: 12px;">⌨️</div>
+          <h4 style="font-weight: 700;">Typing Challenge</h4>
+          <div style="color: #667eea; font-weight: 900; margin-top: 8px;">+75 XP</div>
+          <div style="opacity: 0.6; font-size: 12px;">50+ Questions</div>
+        </div>
+
+        <div class="card" style="cursor: pointer; padding: 25px; text-align: center;" onclick="startGame('multiple-choice')">
+          <div style="font-size: 48px; margin-bottom: 12px;">❓</div>
+          <h4 style="font-weight: 700;">Multiple Choice</h4>
+          <div style="color: #667eea; font-weight: 900; margin-top: 8px;">+60 XP</div>
+          <div style="opacity: 0.6; font-size: 12px;">50+ Questions</div>
+        </div>
+
+        <div class="card" style="cursor: pointer; padding: 25px; text-align: center;" onclick="startGame('matching')">
+          <div style="font-size: 48px; margin-bottom: 12px;">🎯</div>
+          <h4 style="font-weight: 700;">Matching</h4>
+          <div style="color: #667eea; font-weight: 900; margin-top: 8px;">+55 XP</div>
+          <div style="opacity: 0.6; font-size: 12px;">50+ Questions</div>
+        </div>
+
+        <div class="card" style="cursor: pointer; padding: 25px; text-align: center;" onclick="startGame('flashcard')">
+          <div style="font-size: 48px; margin-bottom: 12px;">🎴</div>
+          <h4 style="font-weight: 700;">Flashcard</h4>
+          <div style="color: #667eea; font-weight: 900; margin-top: 8px;">+40 XP</div>
+          <div style="opacity: 0.6; font-size: 12px;">50+ Questions</div>
+        </div>
+
+        <div class="card" style="cursor: pointer; padding: 25px; text-align: center;" onclick="startGame('listening')">
+          <div style="font-size: 48px; margin-bottom: 12px;">🎧</div>
+          <h4 style="font-weight: 700;">Listening</h4>
+          <div style="color: #667eea; font-weight: 900; margin-top: 8px;">+80 XP</div>
+          <div style="opacity: 0.6; font-size: 12px;">50+ Questions</div>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function generateAIQuestions(type, count) {
+  const allVocab = [...VOCABULARY_DATA.A1, ...VOCABULARY_DATA.A2];
+  const questions = [];
+  const usedIndices = new Set();
+
+  for (let i = 0; i < count; i++) {
+    let randomIdx;
+    do {
+      randomIdx = Math.floor(Math.random() * allVocab.length);
+    } while (usedIndices.has(randomIdx) && usedIndices.size < allVocab.length);
+    usedIndices.add(randomIdx);
+
+    const word = allVocab[randomIdx];
+    
+    if (type === 'reading') {
+      const wrongMeanings = allVocab
+        .filter((_, idx) => idx !== randomIdx)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+        .map(w => w.meaning);
+
+      questions.push({
+        type: 'reading',
+        sentence: word.example,
+        word: word.word,
+        meaning: word.meaning,
+        level: word.level,
+        options: shuffle([word.meaning, ...wrongMeanings])
+      });
+    } else if (type === 'typing') {
+      questions.push({
+        type: 'typing',
+        meaning: word.meaning,
+        word: word.word,
+        example: word.example,
+        level: word.level
+      });
+    } else if (type === 'multiple-choice') {
+      const wrongMeanings = allVocab
+        .filter((_, idx) => idx !== randomIdx)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+        .map(w => w.meaning);
+
+      questions.push({
+        type: 'multiple-choice',
+        word: word.word,
+        meaning: word.meaning,
+        level: word.level,
+        options: shuffle([word.meaning, ...wrongMeanings])
+      });
+    } else if (type === 'listening') {
+      const wrongWords = allVocab
+        .filter((_, idx) => idx !== randomIdx)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+        .map(w => w.word);
+
+      questions.push({
+        type: 'listening',
+        word: word.word,
+        meaning: word.meaning,
+        example: word.example,
+        level: word.level,
+        options: shuffle([word.word, ...wrongWords])
+      });
+    }
+  }
+  
+  return questions;
+}
+
+function startGame(gameType) {
+  const questions = generateAIQuestions(gameType, 5);
+  gameState = {
+    type: gameType,
+    questions: questions,
+    current: 0,
+    score: 0,
+    results: [],
+    selectedAnswer: null
+  };
+
+  if (gameType === 'reading') showReadingQuestion();
+  else if (gameType === 'typing') showTypingQuestion();
+  else if (gameType === 'multiple-choice') showMultipleChoiceQuestion();
+  else if (gameType === 'matching') showMatchingGame();
+  else if (gameType === 'flashcard') showFlashcardGame();
+  else if (gameType === 'listening') showListeningQuestion();
+}
+
+function showReadingQuestion() {
+  const q = gameState.questions[gameState.current];
+  if (!q) { finishGame(); return; }
+
+  const progress = Math.round(((gameState.current) / gameState.questions.length) * 100);
+
+  showPage(`
+    <div style="padding: 30px; max-width: 700px; margin: 0 auto;">
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <span style="opacity: 0.6;">Q${gameState.current + 1}/${gameState.questions.length}</span>
+          <span style="font-weight: 700; color: #667eea;">Score: ${gameState.score}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; margin-bottom: 20px;">
+        <div style="font-size: 18px; margin-bottom: 12px;">📖 Read this sentence:</div>
+        <p style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">"${q.sentence}"</p>
+        <div style="font-size: 14px; opacity: 0.9;">What does "<span style="color: #ffd700; font-weight: 900;">${q.word}</span>" mean?</div>
+        <div style="margin-top: 8px; opacity: 0.8; font-size: 12px;"><span class="level-badge" style="background: rgba(255,255,255,0.2); color: white; border-color: white;">${q.level}</span></div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        ${q.options.map((opt, i) => `
+          <div class="answer-card ${gameState.selectedAnswer === i ? 'selected' : ''}" onclick="selectReadingOption(${i}, '${q.meaning}')">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="nextQuestion(false)">Skip</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="nextQuestion(true)">Next ➜</button>
+      </div>
+    </div>
+  `);
+}
+
+function selectReadingOption(index, correct) {
+  gameState.selectedAnswer = index;
+  const answer = gameState.questions[gameState.current].options[index];
+  
+  if (answer === correct) {
+    gameState.score += 50;
+    gameState.results.push({ q: gameState.current + 1, correct: true });
+  } else {
+    gameState.results.push({ q: gameState.current + 1, correct: false, answer: answer, correctAnswer: correct });
+  }
+  
+  showReadingQuestion();
+}
+
+function showTypingQuestion() {
+  const q = gameState.questions[gameState.current];
+  if (!q) { finishGame(); return; }
+
+  const progress = Math.round(((gameState.current) / gameState.questions.length) * 100);
+
+  showPage(`
+    <div style="padding: 30px; max-width: 700px; margin: 0 auto;">
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <span style="opacity: 0.6;">Q${gameState.current + 1}/${gameState.questions.length}</span>
+          <span style="font-weight: 700; color: #667eea;">Score: ${gameState.score}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; margin-bottom: 20px;">
+        <div style="font-size: 18px; margin-bottom: 12px;">✍️ Type the word:</div>
+        <p style="font-size: 22px; font-weight: 900; margin-bottom: 16px;">${q.meaning}</p>
+        <div style="font-size: 13px; opacity: 0.85;">Example: "${q.example}"</div>
+        <div style="margin-top: 12px; opacity: 0.8;"><span class="level-badge" style="background: rgba(255,255,255,0.2); color: white; border-color: white;">${q.level}</span></div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <input type="text" id="typing-input" class="input" placeholder="Type the word..." onkeydown="if(event.key==='Enter') checkTyping('${q.word}')">
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="nextQuestion(false)">Skip</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="checkTyping('${q.word}')">Check ✓</button>
+      </div>
+    </div>
+  `);
+  
+  setTimeout(() => document.getElementById('typing-input').focus(), 100);
+}
+
+function checkTyping(correct) {
+  const input = document.getElementById('typing-input').value.toLowerCase().trim();
+  
+  if (input === correct.toLowerCase()) {
+    gameState.score += 75;
+    gameState.results.push({ q: gameState.current + 1, correct: true });
+  } else {
+    gameState.results.push({ q: gameState.current + 1, correct: false, answer: input, correctAnswer: correct });
+  }
+  
+  nextQuestion(true);
+}
+
+function showMultipleChoiceQuestion() {
+  const q = gameState.questions[gameState.current];
+  if (!q) { finishGame(); return; }
+
+  const progress = Math.round(((gameState.current) / gameState.questions.length) * 100);
+
+  showPage(`
+    <div style="padding: 30px; max-width: 700px; margin: 0 auto;">
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <span style="opacity: 0.6;">Q${gameState.current + 1}/${gameState.questions.length}</span>
+          <span style="font-weight: 700; color: #667eea;">Score: ${gameState.score}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; margin-bottom: 20px;">
+        <div style="font-size: 16px; margin-bottom: 12px;">❓ What is the meaning?</div>
+        <p style="font-size: 28px; font-weight: 900;">${q.word}</p>
+        <div style="margin-top: 12px;"><span class="level-badge" style="background: rgba(255,255,255,0.2); color: white; border-color: white;">${q.level}</span></div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        ${q.options.map((opt, i) => `
+          <div class="answer-card ${gameState.selectedAnswer === i ? 'selected' : ''}" onclick="selectMCOption(${i}, '${q.meaning}')">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="nextQuestion(false)">Skip</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="nextQuestion(true)">Next ➜</button>
+      </div>
+    </div>
+  `);
+}
+
+function selectMCOption(index, correct) {
+  gameState.selectedAnswer = index;
+  const answer = gameState.questions[gameState.current].options[index];
+  
+  if (answer === correct) {
+    gameState.score += 60;
+    gameState.results.push({ q: gameState.current + 1, correct: true });
+  } else {
+    gameState.results.push({ q: gameState.current + 1, correct: false, answer: answer, correctAnswer: correct });
+  }
+  
+  showMultipleChoiceQuestion();
+}
+
+function showFlashcardGame() {
+  const q = gameState.questions[gameState.current];
+  if (!q) { finishGame(); return; }
+
+  const progress = Math.round(((gameState.current) / gameState.questions.length) * 100);
+
+  showPage(`
+    <div style="padding: 30px; max-width: 700px; margin: 0 auto;">
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <span style="opacity: 0.6;">Card ${gameState.current + 1}/${gameState.questions.length}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; margin-bottom: 20px;" id="flashcard-flip" onclick="flipCard()" data-flipped="0">
+        <div style="font-size: 18px; opacity: 0.9; margin-bottom: 16px;">⬅️ Click to flip</div>
+        <div style="font-size: 32px; font-weight: 900;">${q.word}</div>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="nextQuestion(false)">Previous</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="nextQuestion(true)">Next ➜</button>
+      </div>
+    </div>
+  `);
+}
+
+function flipCard() {
+  const card = document.getElementById('flashcard-flip');
+  const isFlipped = card.dataset.flipped === '1';
+  const q = gameState.questions[gameState.current];
+  
+  if (isFlipped) {
+    card.innerHTML = `
+      <div style="font-size: 18px; opacity: 0.9; margin-bottom: 16px;">⬅️ Click to flip</div>
+      <div style="font-size: 32px; font-weight: 900;">${q.word}</div>
+    `;
+    card.dataset.flipped = '0';
+  } else {
+    card.innerHTML = `
+      <div style="font-size: 18px; opacity: 0.9; margin-bottom: 16px;">⬅️ Click to flip</div>
+      <div style="font-size: 32px; font-weight: 900;">${q.meaning}</div>
+    `;
+    card.dataset.flipped = '1';
+  }
+}
+
+function showMatchingGame() {
+  const questions = gameState.questions.slice(0, 4);
+  
+  showPage(`
+    <div style="padding: 30px; max-width: 900px; margin: 0 auto;">
+      <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">🎯 Match Words with Meanings</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <div>
+          <h3 style="font-weight: 700; margin-bottom: 15px;">Words</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${questions.map((q, i) => `
+              <div class="card" style="cursor: pointer; padding: 16px; text-align: center; font-weight: 700; font-size: 16px;" onclick="selectWord(${i})">
+                ${q.word}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-weight: 700; margin-bottom: 15px;">Meanings</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${shuffle(questions).map((q, i) => `
+              <div class="card" style="cursor: pointer; padding: 16px; text-align: center; font-weight: 700; font-size: 16px;" onclick="selectMeaning(${i}, '${q.meaning}')">
+                ${q.meaning}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" style="width: 100%; margin-top: 30px;" onclick="finishGame()">Done</button>
+    </div>
+  `);
+}
+
+function showListeningQuestion() {
+  const q = gameState.questions[gameState.current];
+  if (!q) { finishGame(); return; }
+
+  const progress = Math.round(((gameState.current) / gameState.questions.length) * 100);
+
+  showPage(`
+    <div style="padding: 30px; max-width: 700px; margin: 0 auto;">
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <span style="opacity: 0.6;">Q${gameState.current + 1}/${gameState.questions.length}</span>
+          <span style="font-weight: 700; color: #667eea;">Score: ${gameState.score}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%;"></div>
+        </div>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 40px; text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 60px; margin-bottom: 16px;">🎧</div>
+        <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Listen to the pronunciation</div>
+        <button class="btn btn-success" style="background: white; color: #667eea; font-weight: 900;" onclick="speakWord('${q.word}')">🔊 Play Audio</button>
+        <div style="margin-top: 16px; opacity: 0.8; font-size: 12px;"><span class="level-badge" style="background: rgba(255,255,255,0.2); color: white; border-color: white;">${q.level}</span></div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        ${q.options.map((opt, i) => `
+          <div class="answer-card ${gameState.selectedAnswer === i ? 'selected' : ''}" onclick="selectListeningOption(${i}, '${q.word}')">
+            ${opt}
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="nextQuestion(false)">Skip</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="nextQuestion(true)">Next ➜</button>
+      </div>
+    </div>
+  `);
+}
+
+function speakWord(word) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.8;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+function selectListeningOption(index, correct) {
+  gameState.selectedAnswer = index;
+  const answer = gameState.questions[gameState.current].options[index];
+  
+  if (answer === correct) {
+    gameState.score += 80;
+    gameState.results.push({ q: gameState.current + 1, correct: true });
+  } else {
+    gameState.results.push({ q: gameState.current + 1, correct: false, answer: answer, correctAnswer: correct });
+  }
+  
+  showListeningQuestion();
+}
+
+function nextQuestion(confirm) {
+  gameState.current++;
+  gameState.selectedAnswer = null;
+  
+  if (gameState.current >= gameState.questions.length) {
+    finishGame();
+  } else if (gameState.type === 'reading') {
+    showReadingQuestion();
+  } else if (gameState.type === 'typing') {
+    showTypingQuestion();
+  } else if (gameState.type === 'multiple-choice') {
+    showMultipleChoiceQuestion();
+  } else if (gameState.type === 'flashcard') {
+    showFlashcardGame();
+  } else if (gameState.type === 'listening') {
+    showListeningQuestion();
+  }
+}
+
+async function finishGame() {
+  const totalXP = gameState.score;
+  const correct = gameState.results.filter(r => r.correct).length;
+  const wrong = gameState.results.filter(r => !r.correct).length;
+
+  const updates = {
+    ...currentUser,
+    total_xp: (currentUser.total_xp || 0) + totalXP,
+    daily_streak: (currentUser.daily_streak || 0) + 1,
+    correct_answers: (currentUser.correct_answers || 0) + correct,
+    wrong_answers: (currentUser.wrong_answers || 0) + wrong,
+    games_played: (currentUser.games_played || 0) + 1
+  };
+
+  currentUser = updates;
+  const userIndex = allUsers.findIndex(u => u.username === currentUser.username);
+  if (userIndex >= 0) {
+    allUsers[userIndex] = updates;
+  }
+  saveToLocalStorage();
+
+  document.getElementById('xp-display').textContent = updates.total_xp;
+  document.getElementById('streak-display').textContent = updates.daily_streak;
+
+  const resultsHTML = gameState.results.map((r, i) => `
+    <tr>
+      <td>#${r.q}</td>
+      <td>${r.correct ? '✅' : '❌'}</td>
+      <td>${r.correct ? 'Correct' : r.answer || 'Skipped'}</td>
+      <td>${!r.correct ? r.correctAnswer : '-'}</td>
+    </tr>
+  `).join('');
+
+  showPage(`
+    <div style="padding: 30px; max-width: 800px; margin: 0 auto; text-align: center;">
+      <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+      <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 20px; color: #667eea;">Game Complete!</h1>
+
+      <div class="card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; margin-bottom: 20px; padding: 30px;">
+        <div style="font-size: 48px; font-weight: 900; margin-bottom: 12px;">+${totalXP} XP</div>
+        <div style="font-size: 18px; margin-bottom: 16px;">Correct: <span style="color: #51cf66; font-weight: 900;">${correct}</span> | Wrong: <span style="color: #ff6b6b; font-weight: 900;">${wrong}</span></div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-weight: 700; margin-bottom: 15px; text-align: left;">📊 Results</h3>
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Status</th>
+              <th>Your Answer</th>
+              <th>Correct Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${resultsHTML}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="navigateTo('games')">Play Again</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="navigateTo('home')">Home</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderGrammar() {
+  showPage(`
+    <div style="padding: 30px; max-width: 900px; margin: 0 auto;">
+      <h2 style="font-size: 32px; margin-bottom: 20px; font-weight: 900;">✍️ AI Grammar Checker</h2>
+
+      <div class="card" style="background: #e3f2fd; border: 3px solid #667eea; margin-bottom: 20px;">
+        <div style="font-weight: 700; color: #1565c0; margin-bottom: 8px;">🤖 AI-Powered Grammar Assistance</div>
+        <div style="font-size: 14px; color: #0c5460;">Type or paste your English text. Our AI checks: Subject-Verb Agreement • A/An Usage • Plurals • Spelling • Word Order • Capitalization • Tenses</div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Your Text:</label>
+        <textarea id="grammar-input" class="input" style="min-height: 150px; border: 3px solid #333; padding: 16px; font-family: 'Courier Prime', monospace;" placeholder="Type your English text here...
+
+Examples:
+• I is happy today.
+• he go to school
+• a apple is red
+• She don't like pizza.
+• does you understand"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 30px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="checkGrammar()">🤖 Check Grammar</button>
+        <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('grammar-input').value = ''">Clear</button>
+      </div>
+
+      <div id="grammar-result"></div>
+    </div>
+  `);
+}
+
+function checkGrammar() {
+  const text = document.getElementById('grammar-input').value.trim();
+  
+  if (!text) {
+    document.getElementById('grammar-result').innerHTML = `<div class="grammar-feedback grammar-wrong">⚠️ Please enter text first!</div>`;
+    return;
+  }
+
+  const feedback = analyzeGrammar(text);
+  
+  const resultHTML = `
+    <div class="card" style="background: ${feedback.correct ? '#d4edda' : '#f8d7da'}; border: 3px solid ${feedback.correct ? '#28a745' : '#f5c6cb'};">
+      <div style="font-weight: 900; font-size: 16px; margin-bottom: 12px;">
+        ${feedback.correct ? '✅ Great! No Grammar Issues Found' : '❌ Grammar Issues Found'}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <div style="font-weight: 700; margin-bottom: 6px;">Your text:</div>
+        <div style="background: white; padding: 12px; border-radius: 4px; font-family: 'Courier Prime', monospace;">
+          ${text}
+        </div>
+      </div>
+      ${!feedback.correct ? `
+        <div style="margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 6px;">Suggested:</div>
+          <div style="background: white; padding: 12px; border-radius: 4px; font-family: 'Courier Prime', monospace;">
+            ${feedback.suggested}
+          </div>
+        </div>
+      ` : ''}
+      <div style="margin-bottom: 12px;">
+        <div style="font-weight: 700; margin-bottom: 6px;">Issues Found:</div>
+        ${feedback.issues.map(issue => `<div class="grammar-issue">${issue}</div>`).join('')}
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('grammar-result').innerHTML = resultHTML;
+}
+
+function analyzeGrammar(text) {
+  const issues = [];
+  let suggested = text;
+  let correct = true;
+
+  GRAMMAR_RULES.forEach(rule => {
+    if (rule.test(text)) {
+      correct = false;
+      issues.push(`<strong>❌ ${rule.name}</strong><br>${rule.explanation}`);
+      
+      if (rule.fix) {
+        suggested = rule.fix(text);
+      }
+    }
+  });
+
+  if (!/[.!?]$/.test(text)) {
+    correct = false;
+    issues.push(`<strong>❌ Missing Punctuation</strong><br>Always end sentences with a period (.), question mark (?), or exclamation mark (!)`);
+    suggested = text + '.';
+  }
+
+  return {
+    correct: issues.length === 0,
+    suggested: suggested || text,
+    issues: issues.length > 0 ? issues : ['✓ No grammar issues found!']
+  };
+}
+
+function closeExplanationModal() {
+  document.getElementById('explanation-modal').classList.remove('show');
+}
+
+function renderTournament() {
+  const topPlayers = allUsers
+    .sort((a, b) => (b.total_xp || 0) - (a.total_xp || 0))
+    .slice(0, 10);
+
+  const userRank = topPlayers.findIndex(u => u.username === currentUser.username) + 1;
+
+  const leaderboardHTML = topPlayers.map((user, idx) => `
+    <div class="tournament-row" style="${user.username === currentUser.username ? 'background: #fff3cd; border: 3px solid #ffc107;' : ''}">
+      <div style="font-weight: 900; font-size: 18px; min-width: 40px;">#${idx + 1}</div>
+      <div style="flex: 1;">
+        <div style="font-weight: 700;">${user.display_name}</div>
+        <div style="opacity: 0.6; font-size: 12px;">@${user.username}</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-weight: 900; color: #667eea; font-size: 18px;">${user.total_xp || 0}</div>
+        <div style="opacity: 0.6; font-size: 11px;">⭐ XP</div>
+      </div>
+      <div style="text-align: right; margin-left: 20px; min-width: 60px;">
+        <div style="font-weight: 700; font-size: 14px;">✅${user.correct_answers || 0}</div>
+        <div style="opacity: 0.6; font-size: 11px;">Correct</div>
+      </div>
+    </div>
+  `).join('');
+
+  showPage(`
+    <div style="padding: 30px; max-width: 900px; margin: 0 auto;">
+      <h2 style="font-size: 32px; margin-bottom: 20px; font-weight: 900;">🏆 Tournament Leaderboard</h2>
+
+      ${userRank > 0 ? `
+        <div class="card" style="background: linear-gradient(135deg, #ffc107, #ff9800); color: white; border: 4px solid #333; margin-bottom: 20px; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700;">Your Position</div>
+              <div style="font-size: 24px; font-weight: 900;">#${userRank} / ${topPlayers.length}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 20px; font-weight: 900;">${currentUser.total_xp || 0} XP</div>
+              <div style="font-size: 12px;">Keep playing! 🚀</div>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
+      <h3 style="font-weight: 700; margin-bottom: 15px; font-size: 18px;">🥇 Top Players</h3>
+      ${leaderboardHTML}
+
+      <div style="margin-top: 30px; text-align: center;">
+        <button class="btn btn-primary" style="width: 100%; max-width: 300px;" onclick="navigateTo('games')">Play Games to Climb! 🎮</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderProfile() {
+  const xp = currentUser.total_xp || 0;
+  const streak = currentUser.daily_streak || 0;
+  const correct = currentUser.correct_answers || 0;
+  const wrong = currentUser.wrong_answers || 0;
+  const accuracy = (correct + wrong) > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+
+  showPage(`
+    <div style="padding: 30px; max-width: 700px; margin: 0 auto;">
+      <h2 style="font-size: 32px; margin-bottom: 30px; font-weight: 900;">👤 Profile</h2>
+
+      <div class="card" style="text-align: center; margin-bottom: 30px;">
+        <div class="profile-avatar">
+          ${(currentUser.display_name || 'U')[0].toUpperCase()}
+        </div>
+        <h1 style="font-size: 24px; font-weight: 900; margin-bottom: 8px;">${currentUser.display_name}</h1>
+        <p style="opacity: 0.6;">@${currentUser.username}</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 30px;">
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px;">⭐</div>
+          <div style="font-size: 22px; font-weight: 900; color: #667eea;">${xp}</div>
+          <div style="opacity: 0.6; font-size: 12px;">Total XP</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px;">🔥</div>
+          <div style="font-size: 22px; font-weight: 900; color: #ff6b6b;">${streak}</div>
+          <div style="opacity: 0.6; font-size: 12px;">Streak</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px;">✅</div>
+          <div style="font-size: 22px; font-weight: 900; color: #51cf66;">${correct}</div>
+          <div style="opacity: 0.6; font-size: 12px;">Correct</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+          <div style="font-size: 22px; font-weight: 900; color: #667eea;">${accuracy}%</div>
+          <div style="opacity: 0.6; font-size: 12px;">Accuracy</div>
+        </div>
+      </div>
+
+      <button class="btn btn-danger" style="width: 100%;" onclick="logout()">🚪 Logout</button>
+    </div>
+  `);
+}
+
+function initAuth() {
+  document.getElementById('go-reg-link').addEventListener('click', () => {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+  });
+
+  document.getElementById('go-login-link').addEventListener('click', () => {
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+  });
+
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const err = document.getElementById('login-error');
+
+    if (!user || !pass) {
+      err.textContent = '❌ Please enter username and password';
+      err.style.display = 'block';
+      return;
+    }
+
+    const found = allUsers.find(u => u.username === user && u.password === pass);
+    if (!found) {
+      err.textContent = '❌ Invalid username or password';
+      err.style.display = 'block';
+      return;
+    }
+
+    currentUser = found;
+    localStorage.setItem('practice_eng_user', found.username);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'flex';
+    updateUIFromUser();
+    navigateTo('home');
+  });
+
+  document.getElementById('reg-btn').addEventListener('click', () => {
+    const name = document.getElementById('reg-name').value.trim();
+    const user = document.getElementById('reg-user').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const err = document.getElementById('reg-error');
+
+    if (!name || !user || !pass) {
+      err.textContent = '❌ Please fill all fields';
+      err.style.display = 'block';
+      return;
+    }
+
+    if (allUsers.find(u => u.username === user)) {
+      err.textContent = '❌ Username already taken';
+      err.style.display = 'block';
+      return;
+    }
+
+    const newUser = {
+      username: user,
+      password: pass,
+      display_name: name,
+      total_xp: 0,
+      daily_streak: 0,
+      correct_answers: 0,
+      wrong_answers: 0,
+      games_played: 0,
+      created_at: new Date().toISOString()
+    };
+
+    allUsers.push(newUser);
+    saveToLocalStorage();
+    alert('✅ Account created! Please login.');
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('login-user').value = user;
+  });
+
+  document.getElementById('login-pass').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('login-btn').click();
+  });
+}
+
+function updateUIFromUser() {
+  document.getElementById('xp-display').textContent = currentUser.total_xp || 0;
+  document.getElementById('streak-display').textContent = currentUser.daily_streak || 0;
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('practice_eng_user');
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('login-form').style.display = 'block';
+  document.getElementById('register-form').style.display = 'none';
+}
+
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function init() {
+  loadFromLocalStorage();
+  initAuth();
+
+  const saved = localStorage.getItem('practice_eng_user');
+  if (saved) {
+    const user = allUsers.find(u => u.username === saved);
+    if (user) {
+      currentUser = user;
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('main-app').style.display = 'flex';
+      updateUIFromUser();
+      navigateTo('home');
+      return;
+    }
+  }
+}
+
+init();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d40d66ae1b07335',t:'MTc3MjEyMzUzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
